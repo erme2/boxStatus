@@ -1,4 +1,4 @@
 <?php
-define(APP_ENV, 'live');
+define("APP_ENV", 'live');
 
-include_once __DIR__.'/../src/bootstrap.php';
+include_once __DIR__.'/../app/bootstrap.php';
