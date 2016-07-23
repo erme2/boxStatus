@@ -13,9 +13,11 @@ Class indexController
 
         // do we need to check the ip?
         if (false !== array_search('ip', $app['config']['access'])){
-// TODO CHECK ADDRESS
-            $ipService = new ipService();
-            $ipService->checkIpList($app['config']['ip_list']);
+            // CHECK IP ADDRESS
+            $ipService = new ipService($app);
+            if($ipService->checkIpList($app['config']['ip_list']) === false){
+                $app->abort(403, "Forbidden");
+            }
         }
 
         // do we need to check the token?
@@ -23,5 +25,8 @@ Class indexController
 // TODO CHECK TOKEN
         }
 
+        return $app->json(
+            ["done"=>time()]
+        );
     }
 }
