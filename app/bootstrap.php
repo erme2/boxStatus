@@ -10,6 +10,7 @@ $app['config'] = Yaml\Yaml::parse(
     file_get_contents(__DIR__.'/config/config_'.APP_ENV.'.yml')
 );
 
+include 'controllers.php';
 include 'routing.php';
 
 $app->run();
