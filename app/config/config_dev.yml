@@ -6,9 +6,11 @@ ip_list:
   white_list:
     localhost:    127.0.0.1
     internal:     192.168.0.33
+    trusted:      192.168.0.*
+  # if white_list is setted black_list will not be checked
   black_list:
     someone:      123.123.123.1
-    someoneelse:  pirateSteve
+    netmask:      123.123.123.*
 
 token:
   saltkey: this is not a secret
