@@ -1,6 +1,6 @@
 <?php
 
-namespace boxStatus\Controllers;
+namespace boxStatus\Controller;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;

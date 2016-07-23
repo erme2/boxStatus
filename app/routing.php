@@ -4,12 +4,3 @@ $app->get('/', function(Silex\Application $app) {
 });
 
 $app->post('/', "controller.index:indexAction");
-
-//$app->post('/', function(Silex\Application $app) {
-//    return $app->json([
-//        'request' =>[
-//            'endpoint'  => '/',
-//            'time'      => time(),
-//        ]
-//    ]);
-//});

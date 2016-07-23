@@ -6,5 +6,5 @@ $app->register(new Silex\Provider\SessionServiceProvider());
 
 // linking controllers
 $app['controller.index'] = function($app) {
-    return new boxStatus\Controllers\indexController();
+    return new boxStatus\Controller\indexController($app);
 };

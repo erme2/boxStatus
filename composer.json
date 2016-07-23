@@ -6,6 +6,6 @@
     "autoload": {
         "psr-4": {
             "boxStatus\\Controller\\": "src/boxStatus/Controller"
+            }
         }
-    }
 }
