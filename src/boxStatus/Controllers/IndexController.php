@@ -2,6 +2,7 @@
 
 namespace boxStatus\Controllers;
 
+use boxStatus\Services\tokenService;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -30,6 +31,10 @@ Class indexController extends Ancestor
         // do we need to check the token?
         if (array_search('token', $app['config']['access']))
         {
+            $checkToken = new tokenService();
+            $time = $request->get('time');
+die($time);
+
 // TODO CHECK TOKEN
         }
 
