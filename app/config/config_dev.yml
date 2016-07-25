@@ -6,7 +6,7 @@ ip_list:
   white_list:
     localhost:    127.0.0.1
     internal:     192.168.33.2
-    trusted:      192.168.33.*
+    trusted:      192.168.32.*
   # if white_list is setted black_list will not be checked
   black_list:
     someone:      123.123.123.1

@@ -1,11 +1,12 @@
 <?php
 namespace boxStatus\Services;
 
+use boxStatus\Controllers\Ancestor;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 
-Class ipService
+Class ipService extends Ancestor
 {
     var $remoteAddress      = false;
     var $remoteAddressMasks = [];
@@ -57,7 +58,7 @@ Class ipService
 
         $errors = $this->app['validator']->validate($this->remoteAddress, new Assert\Ip());
         if($errors->count() > 0){
-            $this->app->abort(500, "Internal Server Error");
+            $this->returError($this->app, 500);
         }
 
         // setting the masks
