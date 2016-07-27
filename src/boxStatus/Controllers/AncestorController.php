@@ -11,8 +11,9 @@ Class Ancestor
         500 => "Internal Server Error",
     ];
 
-    public function __construct()
+    public function __construct(Application $app)
     {
+        $this->app = $app;
         $this->response = [
             "request" => [
                 "received"  => time(),

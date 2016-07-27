@@ -11,8 +11,7 @@ ip_list:
   black_list:
     someone:      123.123.123.1
     netmask:      192.168.33.*
-
 token:
   saltkey: this is not a secret
-
+  expire: 300 # in seconds
 

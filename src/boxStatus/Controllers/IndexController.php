@@ -27,13 +27,11 @@ Class indexController extends Ancestor
                 $this->returError($app, 403);
             }
         }
-
         // do we need to check the token?
         if (array_search('token', $app['config']['access']))
         {
-            $checkToken = new tokenService();
-            $time = $request->get('time');
-die($time);
+            $tokenService = new tokenService($app);
+            $tokenService->checkToken($request->get('token'), $request->get('time'));
 
 // TODO CHECK TOKEN
         }
