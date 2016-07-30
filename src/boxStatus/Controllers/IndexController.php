@@ -7,6 +7,7 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 
 use boxStatus\Services\ipService;
+use Linfo\Linfo;
 require_once 'AncestorController.php';
 
 Class indexController extends Ancestor
@@ -37,13 +38,10 @@ Class indexController extends Ancestor
             }
         }
         // do we need to check the token?
-        if (array_search('token', $app['config']['access']))
+        if (false !== array_search('token', $app['config']['access']))
         {
             $tokenService = new tokenService($app);
-            if($tokenService->checkToken($request->get('token'), $request->get('time'))){
-                // TODO get the data we want to return
-                return $this->returnResult($this->response);
-            } else {
+            if($tokenService->checkToken($request->get('token'), $request->get('time')) === false){
                 if(APP_ENV == 'dev'){
                     $this->response['response'] = [
                         'errorID'       => 403,
@@ -55,5 +53,26 @@ Class indexController extends Ancestor
                 }
             }
         }
+
+        $this->_getData();
+        return $this->returnResult($this->response);
+    }
+
+    private function _getData()
+    {
+        $linfo = new Linfo();
+
+
+
+        $parser = $linfo->getParser();
+
+//        $system['box']      = $parser->getModel();
+//        $system['os']       = $parser->getDistro();
+//        $system['hostname'] = $parser->getHostname();
+        $system['network']  = $parser->getNet();
+//        $system['uptime']   = $parser->getUpTime();
+
+        $this->response['response']['system'] = $system;
+
     }
 }
