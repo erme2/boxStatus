@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use boxStatus\Services\ipService;
 require_once 'AncestorController.php';
 
-Class indexController extends Ancestor
+Class IndexController extends Ancestor
 {
     public function indexAction (Request $request, Application $app)
     {
