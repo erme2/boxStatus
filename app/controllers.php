@@ -7,5 +7,5 @@ $app->register(new Silex\Provider\ValidatorServiceProvider());
 
 // linking controllers
 $app['controller.index'] = function($app) {
-    return new boxStatus\Controllers\indexController($app);
+    return new boxStatus\Controllers\IndexController($app);
 };

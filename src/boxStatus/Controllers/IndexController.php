@@ -10,7 +10,7 @@ use boxStatus\Services\ipService;
 use Linfo\Linfo;
 require_once 'AncestorController.php';
 
-Class indexController extends Ancestor
+Class IndexController extends Ancestor
 {
     public function indexAction (Request $request, Application $app)
     {
