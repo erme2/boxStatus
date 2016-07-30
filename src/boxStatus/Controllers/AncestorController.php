@@ -32,4 +32,9 @@ Class Ancestor
         $this->response ["request"]['method'] = $request->getMethod();
     }
 
+    public function returnResult($result)
+    {
+        $result['request']['time'] = ( time() - $this->response['request']['received']);
+        return $this->app->json($result);
+    }
 }
