@@ -1,11 +1,13 @@
 {
     "require": {
         "silex/silex": "~2.0",
-        "symfony/yaml": "^3.1"
+        "symfony/yaml": "^3.1",
+        "symfony/validator": "^3.1"
     },
     "autoload": {
         "psr-4": {
-            "boxStatus\\Controller\\": "src/boxStatus/Controller"
-            }
+            "boxStatus\\Controllers\\":  "src/boxStatus/Controllers",
+            "boxStatus\\Services\\":     "src/boxStatus/Services"
         }
+    }
 }
