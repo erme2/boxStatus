@@ -14,9 +14,16 @@ Class ipService extends Ancestor
     public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->setAddresses();
+        $this->_setAddresses();
     }
 
+    /**
+     * The main function we use from controllers
+     * to check if we like your ip
+     *
+     * @param $ipList array
+     * @return bool
+     */
     public function checkIpList($ipList)
     {
         // check white_list
@@ -52,7 +59,11 @@ Class ipService extends Ancestor
         }
     }
 
-    private function setAddresses()
+    /**
+     * used by __construction to set all the
+     * variables we will need to check the addresses
+     */
+    private function _setAddresses()
     {
         $this->remoteAddress = $_SERVER['REMOTE_ADDR'];
 

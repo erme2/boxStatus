@@ -2,12 +2,13 @@
 
 namespace boxStatus\Controllers;
 
-use boxStatus\Services\tokenService;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-
 use boxStatus\Services\ipService;
-use Linfo\Linfo;
+use boxStatus\Services\tokenService;
+use boxStatus\Modules\ConsoleModule;
+//use Linfo\Linfo;
+
 require_once 'AncestorController.php';
 
 Class IndexController extends Ancestor
@@ -60,18 +61,16 @@ Class IndexController extends Ancestor
 
     private function _getData()
     {
-        $linfo = new Linfo();
-
-
-
-        $parser = $linfo->getParser();
-
+//        $linfo = new Linfo();
+//        $parser = $linfo->getParser();
 //        $system['box']      = $parser->getModel();
 //        $system['os']       = $parser->getDistro();
 //        $system['hostname'] = $parser->getHostname();
-        $system['network']  = $parser->getNet();
+//        $system['network']  = $parser->getNet();
 //        $system['uptime']   = $parser->getUpTime();
 
+        $console = new ConsoleModule();
+        $system['network'] = $console->getNetwork();
         $this->response['response']['system'] = $system;
 
     }
