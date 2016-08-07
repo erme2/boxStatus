@@ -55,23 +55,52 @@ Class IndexController extends Ancestor
             }
         }
 
-        $this->_getData();
+        // do we need human readable results?
+        if(
+            isset($app['config']['result']['human']) &&
+            $app['config']['result']['human']
+        ){
+            $this->_getData(true);
+        } else {
+            $this->_getData(false);
+        }
+
         return $this->returnResult($this->response);
     }
 
-    private function _getData()
+    private function _getData($human = false)
     {
+        $console = new ConsoleModule();
+
+        $this->response['response'] = $console->getDinamic($human);
 //        $linfo = new Linfo();
 //        $parser = $linfo->getParser();
 //        $system['box']      = $parser->getModel();
 //        $system['os']       = $parser->getDistro();
 //        $system['hostname'] = $parser->getHostname();
-//        $system['network']  = $parser->getNet();
+////        $system['network']  = $parser->getNet();
 //        $system['uptime']   = $parser->getUpTime();
+//        $system['ram']      = $parser->getRam();
 
+
+
+
+
+        //
+
+
+    }
+
+    private function _getStaticData ()
+    {
+
+        // TODO complete this function
+        // TODO add somewhere a param to fire this function
         $console = new ConsoleModule();
-        $system['network'] = $console->getNetwork();
+        $system['network'] = $console->getStatic();
         $this->response['response']['system'] = $system;
 
     }
+
+
 }

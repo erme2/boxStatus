@@ -1,7 +1,7 @@
 --- boxStatus config file
 access:
   - ip
-  - token
+#  - token
 ip_list:
   white_list:
     localhost:    127.0.0.1
@@ -14,4 +14,6 @@ ip_list:
 token:
   saltkey: this is not a secret
   expire: 300 # in seconds
+result:
+  human: true
 
