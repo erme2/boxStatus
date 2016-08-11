@@ -31,6 +31,8 @@ Class ConsoleModule extends Ancestor
     {
         $return['meminfo']['ram']   = $this->_getMemory($human);
         $return['meminfo']['swap']  = $this->_getSwap($human);
+        $return['meminfo']['cpu']   = sys_getloadavg();
+
         return $return;
     }
 
