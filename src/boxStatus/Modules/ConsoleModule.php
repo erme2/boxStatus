@@ -171,36 +171,29 @@ Class ConsoleModule extends Ancestor
 
     private function _getSwap($human = false)
     {
+        $return = [];
         if (is_readable($this->procSwapsFile)) {
             $handle = fopen($this->procSwapsFile, 'r');
-            $return['devices'] = [];
             $lines = [];
             if ($handle) {
                 while ($line = fgets($handle)) {
                     array_push($lines, $line);
                 }
                 if(count($lines) > 1){
-                    foreach ($lines as $line){
-                        $data = array_values(
-                            array_filter(explode(" ", $line))
-                        );
-                        if($data[0] != 'Filename') {
-                            if(count($data)>4) {
-                                array_push($return['devices'], [
-                                    'device' => $data[0],
-                                    'type' => $data[1],
-                                    'size' => $data[2] * 1024,
-                                    'used' => $data[3] * 1024,
-                                    'priority' => trim($data[4]),
-                                ]);
-                            } else {
-                                array_push($return['devices'], [
-                                    'Device' => $data[0],
-                                    'Type' => $data[1],
-                                    'Size' => $data[2] * 1024,
-                                    'Used' => 0,
-                                    'Priority' => trim($data[3]),
-                                ]);
+                    foreach ($lines as $row=>$line) {
+                        if ($row > 0) { // jumping the first row
+                            $data = $this->smartExplode($line);
+                            $return[$data[0]] = [
+                                'Type' => $data[1],
+                                'Size' => $data[2] * 1024,
+                                'Used' => $data[3] * 1024,
+                                'Priority' => $data[4],
+                            ];
+                            if ($human) {
+                                $return[$data[0]]['Human'] = [
+                                    'Size' => $this->HumanSize($data[2] * 1024),
+                                    'Used' => $this->HumanSize($data[3] * 1024),
+                                ];
                             }
                         }
                     }
@@ -230,6 +223,11 @@ Class ConsoleModule extends Ancestor
     }
 
     public function smartExplode($line){
+        $badChars = ["\n"];
+        $goodChars = [""];
+
+        $line = str_replace($badChars, $goodChars, $line);
+
         $return = explode(" ", $line);
         foreach ($return as $key=>$one) {
             if (trim($one) == ""){

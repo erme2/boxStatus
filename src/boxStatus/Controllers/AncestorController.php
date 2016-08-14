@@ -8,6 +8,7 @@ Class Ancestor
 {
     var $errorMessages = [
         403 => "Forbidden",
+        404 => "Not found",
         500 => "Internal Server Error",
     ];
 
@@ -20,7 +21,10 @@ Class Ancestor
                 "time"  => microtime(),
             ]
         ];
-        if($app['config']['result']['human']){
+        if(
+            isset($app['config']['result']['human']) &&
+            $app['config']['result']['human']
+        ){
             $this->response["request"]["human"] = [
                 "received"  => date("d/m/Y H:i:s"),
             ];
