@@ -14,19 +14,6 @@ Class ConsoleModule extends Ancestor
     {
     }
 
-    public function HumanSize($Bytes)
-    {
-        $Type=array("bites", "kb", "mb", "gb", "tb", "peta", "exa", "zetta", "yotta");
-        $Index=0;
-        while($Bytes>=1024)
-        {
-            $Bytes/=1024;
-            $Index++;
-        }
-        $Bytes = round($Bytes,2);
-        return("$Bytes $Type[$Index]");
-    }
-
     public function getDinamic($configs)
     {
         if(
@@ -41,16 +28,15 @@ Class ConsoleModule extends Ancestor
         ) $disks = $configs['disks'];
         else $disks = ['main' => '/',];
 
-        $return['meminfo']['ram']   = $this->_getMemory($human);
-        $return['meminfo']['swap']  = $this->_getSwap($human);
-        $return['meminfo']['disks'] = $this->_getDisks($disks, $human);
-        $return['meminfo']['cpu']   = sys_getloadavg();
+        $return['cpu']   = $this->_getCPU();
+        $return['disks'] = $this->_getDisks($disks, $human);
+        $return['ram']   = $this->_getMemory($human);
+        $return['swap']  = $this->_getSwap($human);
         // TODO add uptime
         // TODO add system updates
 
         return $return;
     }
-
 
     /**
      * this function use _getHost and _getNetwork
@@ -61,6 +47,52 @@ Class ConsoleModule extends Ancestor
     public function getStatic()
     {
         // TODO write it!
+    }
+
+    public function humanSize($Bytes)
+    {
+        $Type=array("bites", "kb", "mb", "gb", "tb", "peta", "exa", "zetta", "yotta");
+        $Index=0;
+        while($Bytes>=1024)
+        {
+            $Bytes/=1024;
+            $Index++;
+        }
+        $Bytes = round($Bytes,2);
+        return("$Bytes $Type[$Index]");
+    }
+
+    public function smartExplode($line){
+        $badChars = ["\n"];
+        $goodChars = [""];
+
+        $line = str_replace($badChars, $goodChars, $line);
+
+        $return = explode(" ", $line);
+        foreach ($return as $key=>$one) {
+            if (trim($one) == ""){
+                unset($return[$key]);
+            }
+        }
+        return array_values($return);
+    }
+
+    private function _getCPU()
+    {
+        $return = [
+            '%cpu' => 0,
+            '%mem' => 0,
+        ];
+        $lines = $this->_shellExec("ps aux");
+        foreach ($lines as $row => $line) {
+            if ($row > 0) { // skipping the title
+                $data = $this->smartExplode($line);
+                $return['%cpu'] = $return['%cpu'] + $data[2];
+                $return['%mem'] = $return['%mem'] + $data[3];
+            }
+        }
+        $return['load']  = sys_getloadavg();
+        return $return;
     }
 
     private function _getDisks(Array $disks, $human = false)
@@ -77,9 +109,9 @@ Class ConsoleModule extends Ancestor
                 $return[$device[5]]['Available']    = $device[3] * 1024;
                 $return[$device[5]]['UsedPerc']     = $device[4];
                 if($human) {
-                    $return[$device[5]]['human']['Total']        = $this->HumanSize($device[1] * 1024);
-                    $return[$device[5]]['human']['Used']         = $this->HumanSize($device[2] * 1024);
-                    $return[$device[5]]['human']['Available']    = $this->HumanSize($device[3] * 1024);
+                    $return[$device[5]]['human']['Total']        = $this->humanSize($device[1] * 1024);
+                    $return[$device[5]]['human']['Used']         = $this->humanSize($device[2] * 1024);
+                    $return[$device[5]]['human']['Available']    = $this->humanSize($device[3] * 1024);
                 }
             }
         }
@@ -128,7 +160,7 @@ Class ConsoleModule extends Ancestor
 
                 if($human){
                     foreach ($return as $key=>$one) {
-                    $return['human'][$key] =$this->HumanSize($one);
+                    $return['human'][$key] =$this->humanSize($one);
                     }
                 }
 
@@ -181,7 +213,7 @@ Class ConsoleModule extends Ancestor
                 }
                 if(count($lines) > 1){
                     foreach ($lines as $row=>$line) {
-                        if ($row > 0) { // jumping the first row
+                        if ($row > 0) { // skipping the title
                             $data = $this->smartExplode($line);
                             $return[$data[0]] = [
                                 'Type' => $data[1],
@@ -191,8 +223,8 @@ Class ConsoleModule extends Ancestor
                             ];
                             if ($human) {
                                 $return[$data[0]]['Human'] = [
-                                    'Size' => $this->HumanSize($data[2] * 1024),
-                                    'Used' => $this->HumanSize($data[3] * 1024),
+                                    'Size' => $this->humanSize($data[2] * 1024),
+                                    'Used' => $this->humanSize($data[3] * 1024),
                                 ];
                             }
                         }
@@ -202,8 +234,8 @@ Class ConsoleModule extends Ancestor
 
             if($human) {
                 foreach ($return['devices'] as $key=>$item) {
-                    $return['devices'][$key]['SizeH'] = $this->HumanSize($return['devices'][$key]['Size']);
-                    $return['devices'][$key]['UsedH'] = $this->HumanSize($return['devices'][$key]['Used']);
+                    $return['devices'][$key]['SizeH'] = $this->humanSize($return['devices'][$key]['Size']);
+                    $return['devices'][$key]['UsedH'] = $this->humanSize($return['devices'][$key]['Used']);
                 }
             }
 
@@ -214,26 +246,15 @@ Class ConsoleModule extends Ancestor
         ];
     }
 
-    private function _shellExec($command)
+    private function _shellExec($command, $escape = false)
     {
-        $command = escapeshellarg($command);
+        if($escape) {
+            $command = $command . escapeshellarg($escape);
+        }
+
         $res = exec($command, $output, $return_var);
 
         return $output;
     }
 
-    public function smartExplode($line){
-        $badChars = ["\n"];
-        $goodChars = [""];
-
-        $line = str_replace($badChars, $goodChars, $line);
-
-        $return = explode(" ", $line);
-        foreach ($return as $key=>$one) {
-            if (trim($one) == ""){
-                unset($return[$key]);
-            }
-        }
-        return array_values($return);
-    }
 }
