@@ -6,8 +6,9 @@
     },
     "autoload": {
         "psr-4": {
-            "boxStatus\\Controllers\\":  "src/boxStatus/Controllers",
-            "boxStatus\\Services\\":     "src/boxStatus/Services"
+            "boxStatus\\Controllers\\": "src/boxStatus/Controllers",
+            "boxStatus\\Modules\\":     "src/boxStatus/Modules",
+            "boxStatus\\Services\\":    "src/boxStatus/Services"
         }
     }
 }

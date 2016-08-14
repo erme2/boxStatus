@@ -5,3 +5,4 @@
 /vendor/
 
 /app/config/config_dev.yml
+/app/config/config_live.yml
