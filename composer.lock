@@ -4,59 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5089b6d4b278eb0458baf4aebcfd5efe",
-    "content-hash": "b32f4d0e6e14ccd01fe1f6699baa850a",
+    "hash": "9861c0abc710041ddf7fc4f8af8da4ee",
+    "content-hash": "430b79ab8ee439d2535e1a260a986e29",
     "packages": [
-        {
-            "name": "linfo/linfo",
-            "version": "v3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/jrgp/linfo.git",
-                "reference": "71d38a376e1048ee71f54b159c5832f6d7c86cf5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/jrgp/linfo/zipball/71d38a376e1048ee71f54b159c5832f6d7c86cf5",
-                "reference": "71d38a376e1048ee71f54b159c5832f6d7c86cf5",
-                "shasum": ""
-            },
-            "require": {
-                "ext-pcre": "*",
-                "php": ">=5.3.0"
-            },
-            "suggest": {
-                "ext-com": "On Windows"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Linfo\\": "src/Linfo"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL"
-            ],
-            "authors": [
-                {
-                    "name": "Joe Gillotti",
-                    "email": "joe@joegillotti.com",
-                    "homepage": "http://joegillotti.com",
-                    "role": "Author"
-                }
-            ],
-            "description": "App and library for easily parsing and displaying system information of the host, like network/torrents/cpu/memory/usb/pci/sound cards/filesystems/raid array/ipmi/etc.",
-            "homepage": "http://github.com/jrgp/linfo",
-            "keywords": [
-                "CPU",
-                "health",
-                "linux",
-                "specs",
-                "system"
-            ],
-            "time": "2015-10-21 09:24:48"
-        },
         {
             "name": "pimple/pimple",
             "version": "v3.0.2",

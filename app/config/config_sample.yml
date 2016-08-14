@@ -16,4 +16,8 @@ token:
   expire: 300 # in seconds
 result:
   human: true
+disks:
+  main: /
+  vagrant: /srv
+
 

@@ -27,11 +27,26 @@ Class ConsoleModule extends Ancestor
         return("$Bytes $Type[$Index]");
     }
 
-    public function getDinamic($human = false)
+    public function getDinamic($configs)
     {
+        if(
+            isset($configs['result']['human']) &&
+            $configs['result']['human']
+        ) $human = true;
+        else $human = false;
+
+        if(
+            isset($configs['disks']) &&
+            is_array($configs['disks'])
+        ) $disks = $configs['disks'];
+        else $disks = ['main' => '/',];
+
         $return['meminfo']['ram']   = $this->_getMemory($human);
         $return['meminfo']['swap']  = $this->_getSwap($human);
+        $return['meminfo']['disks'] = $this->_getDisks($disks, $human);
         $return['meminfo']['cpu']   = sys_getloadavg();
+        // TODO add uptime
+        // TODO add system updates
 
         return $return;
     }
@@ -48,11 +63,29 @@ Class ConsoleModule extends Ancestor
         // TODO write it!
     }
 
+    private function _getDisks(Array $disks, $human = false)
+    {
+        $return = [];
+        $list = $this->_shellExec("df");
+        foreach ($list as $line){
+            $device = $this->smartExplode($line);
+            // considering just used disks
+            if(in_array($device[5], $disks)){
+                $return[$device[5]]['FileSystem']   = $device[0];
+                $return[$device[5]]['Total']        = $device[1];
+                $return[$device[5]]['Used']         = $device[2];
+                $return[$device[5]]['Available']    = $device[3];
+                $return[$device[5]]['UsedPerc']     = $device[4];
+            }
+        }
+
+        return $return;
+    }
+
     private function _getHost()
     {
         // TODO find a name to this function
-        $command = escapeshellarg("hostnamectl");
-        $a = exec($command, $output, $return_var);
+        $output = $this->_shellExec("hostnamectl");
 
         // TODO save those data to a yml file
         // TODO write a fuction to load this data
@@ -105,9 +138,7 @@ Class ConsoleModule extends Ancestor
     private function _getNetwork()
     {
 
-
-        $command = escapeshellarg("ifconfig");
-        $a = exec($command, $output, $return_var);
+        $output = $this->_shellExec("ifconfig");
 
         $return = [];
         foreach ($output as $line) {
@@ -183,5 +214,23 @@ Class ConsoleModule extends Ancestor
         return [
             'error' => "$this->procSwapsFile not readable",
         ];
+    }
+
+    private function _shellExec($command)
+    {
+        $command = escapeshellarg($command);
+        $res = exec($command, $output, $return_var);
+
+        return $output;
+    }
+
+    public function smartExplode($line){
+        $return = explode(" ", $line);
+        foreach ($return as $key=>$one) {
+            if (trim($one) == ""){
+                unset($return[$key]);
+            }
+        }
+        return array_values($return);
     }
 }

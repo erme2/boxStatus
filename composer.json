@@ -2,8 +2,7 @@
     "require": {
         "silex/silex": "~2.0",
         "symfony/yaml": "^3.1",
-        "symfony/validator": "^3.1",
-        "linfo/linfo": "^3.0"
+        "symfony/validator": "^3.1"
     },
     "autoload": {
         "psr-4": {
