@@ -17,6 +17,7 @@ Class Ancestor
         $this->response = [
             "request" => [
                 "received"  => time(),
+                "time"  => microtime(),
             ]
         ];
     }
@@ -34,7 +35,7 @@ Class Ancestor
 
     public function returnResult($result)
     {
-        $result['request']['time'] = ( time() - $this->response['request']['received']);
+        $result['request']['time'] = ( microtime() - $this->response['request']['time']);
         return $this->app->json($result);
     }
 }
