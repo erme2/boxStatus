@@ -20,6 +20,11 @@ Class Ancestor
                 "time"  => microtime(),
             ]
         ];
+        if($app['config']['result']['human']){
+            $this->response["request"]["human"] = [
+                "received"  => date("d/m/Y H:i:s"),
+            ];
+        }
     }
 
     public function returError(Application $app, $errorID)

@@ -72,10 +72,15 @@ Class ConsoleModule extends Ancestor
             // considering just used disks
             if(in_array($device[5], $disks)){
                 $return[$device[5]]['FileSystem']   = $device[0];
-                $return[$device[5]]['Total']        = $device[1];
-                $return[$device[5]]['Used']         = $device[2];
-                $return[$device[5]]['Available']    = $device[3];
+                $return[$device[5]]['Total']        = $device[1] * 1024;
+                $return[$device[5]]['Used']         = $device[2] * 1024;
+                $return[$device[5]]['Available']    = $device[3] * 1024;
                 $return[$device[5]]['UsedPerc']     = $device[4];
+                if($human) {
+                    $return[$device[5]]['human']['Total']        = $this->HumanSize($device[1] * 1024);
+                    $return[$device[5]]['human']['Used']         = $this->HumanSize($device[2] * 1024);
+                    $return[$device[5]]['human']['Available']    = $this->HumanSize($device[3] * 1024);
+                }
             }
         }
 
