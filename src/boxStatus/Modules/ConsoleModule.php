@@ -5,10 +5,12 @@ use boxStatus\Controllers\Ancestor;
 
 Class ConsoleModule extends Ancestor
 {
-    var $system = [];
-    var $network = [];
+    var $system             = [];
+    var $network            = [];
+    var $return             = ['alerts'=>[]];
     var $procSwapsFile      = '/proc/swaps';
     var $procMeminfoFile    = '/proc/meminfo';
+    var $checkAlerts        = false;
 
     public function __construct()
     {
@@ -28,14 +30,20 @@ Class ConsoleModule extends Ancestor
         ) $disks = $configs['disks'];
         else $disks = ['main' => '/',];
 
-        $return['cpu']   = $this->_getCPU();
-        $return['disks'] = $this->_getDisks($disks, $human);
-        $return['ram']   = $this->_getMemory($human);
-        $return['swap']  = $this->_getSwap($human);
+        if(
+            isset($configs['alerts']) &&
+            is_array($configs['alerts'])
+        ) $this->checkAlerts = $configs['alerts'];
+
+
+        $this->return['cpu']   = $this->_getCPU();
+        $this->return['disks'] = $this->_getDisks($disks, $human);
+        $this->return['ram']   = $this->_getMemory($human);
+        $this->return['swap']  = $this->_getSwap($human);
         // TODO add uptime
         // TODO add system updates
 
-        return $return;
+        return $this->return;
     }
 
     /**
@@ -49,17 +57,35 @@ Class ConsoleModule extends Ancestor
         // TODO write it!
     }
 
-    public function humanSize($Bytes)
+    public function humanSize($bytes)
     {
-        $Type=array("bites", "kb", "mb", "gb", "tb", "peta", "exa", "zetta", "yotta");
-        $Index=0;
-        while($Bytes>=1024)
+        $types = ["bites", "kb", "mb", "gb", "tb", "peta", "exa", "zetta", "yotta"];
+        $index = 0;
+        while($bytes >= 1024)
         {
-            $Bytes/=1024;
-            $Index++;
+            $bytes/=1024;
+            $index++;
         }
-        $Bytes = round($Bytes,2);
-        return("$Bytes $Type[$Index]");
+        $bytes = round($bytes,2);
+        return("$bytes $types[$index]");
+    }
+
+    public function robotSize($human)
+    {
+        $types  = ["kb", "mb", "gb", "tb", "peta", "exa", "zetta", "yotta"];
+        $human  = strtolower($human);
+        $type   = str_replace([1,2,3,4,5,6,7,8,9,0],"",$human);
+        $size   = abs(str_replace($type,"",$human));
+
+        $multiplier = 1;
+        foreach ($types as $one) {
+            $multiplier = $multiplier * 1024;
+            if ($one == $type) {
+                return ($size * $multiplier);
+            }
+        }
+
+        return null;
     }
 
     public function smartExplode($line){
@@ -92,6 +118,29 @@ Class ConsoleModule extends Ancestor
             }
         }
         $return['load']  = sys_getloadavg();
+
+        // checking alerts
+        if($this->checkAlerts) {
+            if(
+                isset($this->checkAlerts['cpu']) &&
+                $return['%cpu'] >= $this->checkAlerts['cpu']
+            ){
+                array_push(
+                    $this->return['alerts'],
+                    "[CPU]CPU over ".$return['%cpu']."% ( should be over ".$this->checkAlerts['cpu']."%)"
+                );
+            }
+            if(
+                isset($this->checkAlerts['mem']) &&
+                $return['%mem'] >= $this->checkAlerts['mem']
+            ){
+                array_push(
+                    $this->return['alerts'],
+                    "[MEM]Memory use is on ".$return['%mem']."% (should be less than ".$this->checkAlerts['mem']."%)"
+                );
+            }
+        }
+
         return $return;
     }
 
@@ -115,6 +164,37 @@ Class ConsoleModule extends Ancestor
                 }
             }
         }
+
+        if($this->checkAlerts) {
+            if( isset($this->checkAlerts['disks']) ){
+                $limit = abs($this->checkAlerts['disks']);
+                if($limit !== $this->checkAlerts['disks']) {
+                    // human readable or invalid
+                    $limit = $this->robotSize($this->checkAlerts['disks']);
+                    // is the limit a valid limit?
+                    if($limit) {
+                        foreach ($return as $mount => $item) {
+                            if( $item['Available'] <= $limit){
+                                $humanLimit     = $this->humanSize($limit);
+                                $humanAvailable = $this->humanSize($item['Available']);
+                                array_push(
+                                    $this->return['alerts'],
+                                    "[DISK $mount] you have $humanAvailable on ".$item['FileSystem']." - should  be more than $humanLimit"
+                                );
+                            }
+                        }
+                    } else {
+                        array_push(
+                            $this->return['alerts'],
+                            "The value on config file [alerts/disks section] is invalid"
+                        );
+                    }
+                }
+
+
+            }
+        }
+
 
         return $return;
     }

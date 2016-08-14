@@ -19,5 +19,9 @@ result:
 disks:
   main: /
   vagrant: /srv
+alerts:
+  disks: 1gb # "bites", "kb", "mb", "gb", "tb", "peta", "exa", "zetta", "yotta"
+  cpu: 50
+  mem: 50
 
 
