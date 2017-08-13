@@ -1,9 +1,8 @@
 <?php
 namespace boxStatus\Modules;
 
-use boxStatus\Controllers\Ancestor;
 
-Class ConsoleModule extends Ancestor
+Class ConsoleModule
 {
     var $system             = [];
     var $network            = [];
@@ -12,17 +11,13 @@ Class ConsoleModule extends Ancestor
     var $procMeminfoFile    = '/proc/meminfo';
     var $checkAlerts        = false;
 
-    public function __construct()
-    {
-    }
-
     public function getDinamic($configs)
     {
+        $human = false;
         if(
             isset($configs['result']['human']) &&
             $configs['result']['human']
         ) $human = true;
-        else $human = false;
 
         if(
             isset($configs['disks']) &&
@@ -35,11 +30,13 @@ Class ConsoleModule extends Ancestor
             is_array($configs['alerts'])
         ) $this->checkAlerts = $configs['alerts'];
 
-
         $this->return['cpu']   = $this->_getCPU();
         $this->return['disks'] = $this->_getDisks($disks, $human);
         $this->return['ram']   = $this->_getMemory($human);
-        $this->return['swap']  = $this->_getSwap($human);
+
+
+        // TODO rewrite swap
+        // $this->return['swap']  = $this->_getSwap($human);
         // TODO add uptime
         // TODO add system updates
 
@@ -89,6 +86,7 @@ Class ConsoleModule extends Ancestor
     }
 
     public function smartExplode($line){
+
         $badChars = ["\n"];
         $goodChars = [""];
 
@@ -283,6 +281,9 @@ Class ConsoleModule extends Ancestor
 
     private function _getSwap($human = false)
     {
+        return [];
+        // TODO rewrite
+
         $return = [];
         if (is_readable($this->procSwapsFile)) {
             $handle = fopen($this->procSwapsFile, 'r');
@@ -291,6 +292,7 @@ Class ConsoleModule extends Ancestor
                 while ($line = fgets($handle)) {
                     array_push($lines, $line);
                 }
+
                 if(count($lines) > 1){
                     foreach ($lines as $row=>$line) {
                         if ($row > 0) { // skipping the title
