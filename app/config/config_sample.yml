@@ -1,7 +1,7 @@
 --- boxStatus config file
-access:
+access: # if this array is empty, there is way to access
   - ip
-#  - token
+  - token
 ip_list:
   white_list:
     localhost:    127.0.0.1

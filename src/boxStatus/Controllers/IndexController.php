@@ -7,13 +7,28 @@ use Symfony\Component\HttpFoundation\Request;
 use boxStatus\Services\ipService;
 use boxStatus\Services\tokenService;
 use boxStatus\Modules\ConsoleModule;
-//use Linfo\Linfo;
 
-require_once 'AncestorController.php';
 
-Class IndexController extends Ancestor
+Class IndexController extends AncestorController
 {
-    public function indexAction (Request $request, Application $app)
+    public function indexAction (Request $request)
+    {
+        if($this->authService->check($request)) {
+            $this->_getData();
+            return $this->returnResult('html');
+        } else {
+            return $this->abort(403, "Forbidden");
+        }
+    }
+
+
+    /**
+     * TO BE REWRITE
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse|void
+     */
+    public function boxMasterAction (Request $request)
     {
 
         if(APP_ENV == 'dev')
@@ -25,7 +40,7 @@ Class IndexController extends Ancestor
         if (false !== array_search('ip', $app['config']['access']))
         {
             // CHECK IP ADDRESS
-            $ipService = new ipService($app);
+            $ipService = new ipService($this->app);
             if($ipService->checkIpList($app['config']['ip_list']) === false){
                 if(APP_ENV == 'dev'){
                     $this->response['response'] = [
@@ -68,10 +83,9 @@ Class IndexController extends Ancestor
 
     private function _getStaticData ()
     {
-
         // TODO complete this function
         // TODO add somewhere a param to fire this function
-        $console = new ConsoleModule();
+        $console = new ConsoleModule($this->app);
         $system['network'] = $console->getStatic();
         $this->response['response']['system'] = $system;
 

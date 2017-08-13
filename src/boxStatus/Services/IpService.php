@@ -6,14 +6,14 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 
-Class ipService extends Ancestor
+Class IpService extends AncestorService
 {
     var $remoteAddress      = false;
     var $remoteAddressMasks = [];
 
     public function __construct(Application $app)
     {
-        $this->app = $app;
+        parent::__construct($app);
         $this->_setAddresses();
     }
 
@@ -22,7 +22,7 @@ Class ipService extends Ancestor
      * to check if we like your ip
      *
      * @param $ipList array
-     * @return bool
+     * @return boolean
      */
     public function checkIpList($ipList)
     {
@@ -44,9 +44,9 @@ Class ipService extends Ancestor
      * black list check. As before if we find your ip we reverse
      * the $expecting and you're OUT!
      *
-     * @param   array $list         the addresses array to check
-     * @param   bool  $expecting    the secure response we expext
-     * @return  bool
+     * @param   array   $list         the addresses array to check
+     * @param   boolean $expecting    the secure response we expext
+     * @return  boolean
      */
     private function _checkList(array $list, $expecting = false)
     {
