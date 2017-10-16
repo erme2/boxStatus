@@ -75,6 +75,10 @@ Class IndexController extends AncestorController
         return $this->returnResult($this->response);
     }
 
+    public function awsAction () {
+    	return ":)";
+    }
+
     private function _getData($human = false)
     {
         $console = new ConsoleModule();
