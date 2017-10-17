@@ -37,11 +37,11 @@ Class IndexController extends AncestorController
         }
 
         // do we need to check the ip?
-        if (false !== array_search('ip', $app['config']['access']))
+        if (false !== array_search('ip', $this->app['config']['access']))
         {
             // CHECK IP ADDRESS
             $ipService = new ipService($this->app);
-            if($ipService->checkIpList($app['config']['ip_list']) === false){
+            if($ipService->checkIpList($this->app['config']['ip_list']) === false){
                 if(APP_ENV == 'dev'){
                     $this->response['response'] = [
                         'errorID'       => 403,
@@ -54,9 +54,9 @@ Class IndexController extends AncestorController
             }
         }
         // do we need to check the token?
-        if (false !== array_search('token', $app['config']['access']))
+        if (false !== array_search('token', $this->app['config']['access']))
         {
-            $tokenService = new tokenService($app);
+            $tokenService = new tokenService($this->app);
             if($tokenService->checkToken($request->get('token'), $request->get('time')) === false){
                 if(APP_ENV == 'dev'){
                     $this->response['response'] = [
@@ -65,7 +65,7 @@ Class IndexController extends AncestorController
                     ];
                     return $this->returnResult($this->response);
                 } else {
-                    return $this->returError($app,403);
+                    return $this->returError($this->app,403);
                 }
             }
         }
@@ -73,10 +73,6 @@ Class IndexController extends AncestorController
         $this->_getData();
 
         return $this->returnResult($this->response);
-    }
-
-    public function awsAction () {
-    	return ":)";
     }
 
     private function _getData($human = false)

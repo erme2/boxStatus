@@ -1,5 +1,5 @@
 <?php
 
-$app->get ('/',     "controller.index:awsAction");
-$app->get ('/live', "controller.index:indexAction");
-$app->post('/',     "controller.index:boxMasterAction");
+$app->get ('/',         function () { return ":)"; });
+$app->get ('/status',   "controller.index:indexAction");
+$app->post('/',         "controller.index:boxMasterAction");
