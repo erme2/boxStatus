@@ -11,13 +11,35 @@ use boxStatus\Modules\ConsoleModule;
 
 Class IndexController extends AncestorController
 {
+    public function __construct(Application $app)
+    {
+        parent::__construct($app);
+
+        $this->response = [
+            "request" => [
+                "received"  => time(),
+                "time"  => microtime(true),
+            ]
+        ];
+
+        if(
+            isset($app['config']['result']['human']) &&
+            $app['config']['result']['human']
+        ){
+            $this->response["request"]["human"] = [
+                "received"  => date("d/m/Y H:i:s"),
+            ];
+        }
+
+    }
+
     public function indexAction (Request $request)
     {
         if($this->authService->check($request)) {
             $this->_getData();
-            return $this->returnResult('html');
+            return self::_returnResult('html');
         } else {
-            return $this->abort(403, "Forbidden");
+            return $this->app->abort(403, "Forbidden");
         }
     }
 
@@ -91,5 +113,43 @@ Class IndexController extends AncestorController
 
     }
 
+
+    /**
+     * Return the result by format
+     *
+     * @param string $format
+     * @return string|\Symfony\Component\HttpFoundation\JsonResponse
+     */
+    private function _returnResult($format = 'json')
+    {
+        $this->response['request']['time'] = (
+            microtime(true) -
+            $this->response['request']['time']
+        );
+
+
+        switch ($format) {
+            case 'html':
+                return
+                    "received: ".$this->response['request']['human']['received']."<br/>".
+                    "execution time: git ".$this->response['request']['time']." seconds<br/>".
+                    "---------------------------------------------------<br/>".
+                    "CPU %: ".$this->response['response']['cpu']['%cpu']."<br/>".
+                    "Memory %: ".$this->response['response']['cpu']['%mem']."<br/>".
+                    "---------------------------------------------------<br/>".
+                    "RAM Total: ".$this->response['response']['ram']['human']['MemTotal']."<br/>".
+                    "RAM Free: ".$this->response['response']['ram']['human']['MemFree']."<br/>".
+                    "RAM Available: ".$this->response['response']['ram']['human']['MemAvailable']."<br/>".
+                    "---------------------------------------------------<br/>".
+                    "DISK Total: ".$this->response['response']['disks']['/']['human']['Total']."<br/>".
+                    "DISK Used: ".$this->response['response']['disks']['/']['human']['Used']."<br/>".
+                    "DISK Available: ".$this->response['response']['disks']['/']['human']['Available']."<br/>".
+                    "---------------------------------------------------<br/>";
+                break;
+            case 'json':
+            default:
+                return $this->app->json($this->response);
+        }
+    }
 
 }
