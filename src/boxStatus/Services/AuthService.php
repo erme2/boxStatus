@@ -18,7 +18,7 @@ class AuthService extends AncestorService
     }
 
     /**
-     * Checks if you are
+     * Checks if you are allowed to access the data
      *
      * @return boolean
      */
