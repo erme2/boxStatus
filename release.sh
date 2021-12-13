@@ -27,7 +27,8 @@ git checkout tags/$latestTag
 if [ ${APP_COMPOSER_INSTALL} = "yes" ]
 then
     echo "running composer install"
-    composer install --prefer-dist --no-dev
+    php7.4 /usr/local/bin/composer install --prefer-dist --no-dev
+#    composer install --prefer-dist --no-dev
 fi
 
 # running composer install (if requested)
