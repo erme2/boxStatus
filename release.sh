@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-APP_COMPOSER_INSTALL="no";
+APP_COMPOSER_INSTALL="yes";
 APP_TEST="no";
 
 # getting versions
